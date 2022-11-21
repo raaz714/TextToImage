@@ -20,8 +20,17 @@ public class TextToSignApi {
     }
 
     @GetMapping("/ttos")
-    public String textToSign(@RequestParam(value = "name", defaultValue = "John") String name) {
-        return textToGraphics.getImageFromText(name);
+    public String textToSign(@RequestParam(value = "name", defaultValue = "John") String name,
+            @RequestParam(value = "style", defaultValue = "1") String option) {
+        String base64Image = "";
+        try {
+            base64Image = textToGraphics.getImageFromText(name, Integer.parseInt(option));
+        } catch (NumberFormatException nfe) {
+            System.out.println(nfe);
+            base64Image = textToGraphics.getImageFromText(name, 0);
+        }
+
+        return "data:image/png;base64," + base64Image;
     }
 }
 

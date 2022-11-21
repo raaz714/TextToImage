@@ -7,22 +7,31 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-// import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Base64;
 import javax.imageio.ImageIO;
 import com.texttosign.TextToSign.TextToSignApplication;
 import java.awt.FontFormatException;
 
 public class TextToGraphics {
+    private ArrayList<Font> fonts = new ArrayList<Font>();
 
-    public TextToGraphics() {}
+    public TextToGraphics() {
+        fonts.add(new Font("Arial", Font.ITALIC, 48));
+        try {
+            for (int i = 1; i <= 5; ++i) {
+                fonts.add(Font.createFont(Font.TRUETYPE_FONT, TextToSignApplication.class
+                        .getResourceAsStream("/static/fonts/" + i + ".ttf")));
+            }
 
-    public String getImageFromText(String text) {
+        } catch (IOException | FontFormatException e) {
+            System.out.println("Exception occurred - " + e);
+            // Handle exception
+        }
+    }
+
+    public String getImageFromText(String text, int option) {
 
         // String text = "Hello World Raaz";
 
@@ -32,7 +41,7 @@ public class TextToGraphics {
          */
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = img.createGraphics();
-        Font font = getFont();// new Font("Arial", Font.ITALIC, 48);
+        Font font = getFont(option);// new Font("Arial", Font.ITALIC, 48);
         g2d.setFont(font);
         FontMetrics fm = g2d.getFontMetrics();
         int width = fm.stringWidth(text);
@@ -72,18 +81,20 @@ public class TextToGraphics {
         return "";
     }
 
-    private Font getFont() {
-        try {
-            Font font = Font.createFont(Font.TRUETYPE_FONT,
-                    TextToSignApplication.class.getResourceAsStream("/static/fonts/A.ttf"));
+    private Font getFont(int option) {
 
-            return font.deriveFont(48f);
+        return fonts.get(option).deriveFont(48f);
+        // try {
+        // // Font font = Font.createFont(Font.TRUETYPE_FONT,
+        // // TextToSignApplication.class.getResourceAsStream("/static/fonts/1.ttf"));
 
-        } catch (IOException | FontFormatException e) {
-            System.out.println("Exception occurred - " + e);
-            // Handle exception
-        }
-        return new Font("Arial", Font.ITALIC, 48);
+        // return font.deriveFont(48f);
+
+        // } catch (IOException | FontFormatException e) {
+        // System.out.println("Exception occurred - " + e);
+        // // Handle exception
+        // }
+        // return new Font("Arial", Font.ITALIC, 48);
     }
 
 }
